@@ -5,6 +5,7 @@ import {
   HistoryOutlined,
   LineChartOutlined,
   SlidersOutlined,
+  TeamOutlined, // Import biểu tượng TeamOutlined
 } from '@ant-design/icons';
 
 // icons
@@ -14,6 +15,7 @@ const icons = {
   HistoryOutlined,
   LineChartOutlined,
   SlidersOutlined,
+  TeamOutlined, // Thêm TeamOutlined vào danh sách icons
 };
 
 // ==============================|| MENU ITEMS - UTILITIES ||============================== //
@@ -24,7 +26,7 @@ const utilities = {
   children: [
     {
       id: 'util-dashboardnew',
-      title: 'Dashboardnew',
+      title: 'Dashboard',
       type: 'item',
       url: '/dashboardnew',
       icon: icons.LineChartOutlined,  // Icon biểu đồ cho dashboard
@@ -42,6 +44,13 @@ const utilities = {
       type: 'item',
       url: '/actionHistory',
       icon: icons.HistoryOutlined,  // Icon lịch sử cho lịch sử hành động
+    },
+    {
+      id: 'util-profiles',
+      title: 'About',
+      type: 'item',
+      url: '/profiles',
+      icon: icons.TeamOutlined,  // Thay biểu tượng bằng TeamOutlined
     },
   ]
 };

@@ -1,42 +1,46 @@
-// material-ui
+import React, { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
-
-// project import
+import { Link, useLocation } from 'react-router-dom';
 import Search from './Search';
-import Profile from './Profile';
-import Notification from './Notification';
-import MobileSection from './MobileSection';
-
-// project import
-import { GithubOutlined } from '@ant-design/icons';
+import { TeamOutlined } from '@ant-design/icons';
 
 // ==============================|| HEADER - CONTENT ||============================== //
 
 export default function HeaderContent() {
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
+  const [isProfileActive, setIsProfileActive] = useState(false);
+  const location = useLocation();
+
+  // Kiểm tra xem hiện tại có ở trang Profiles hay không
+  useEffect(() => {
+    if (location.pathname === '/profiles') {
+      setIsProfileActive(true);
+    } else {
+      setIsProfileActive(false);
+    }
+  }, [location.pathname]);
 
   return (
     <>
       {!downLG && <Search />}
-      {downLG && <Box sx={{ width: '100%', ml: 1 }} />}
       <IconButton
         component={Link}
-        href="https://www.facebook.com/to.ten.hoang.03/"
-        target="_blank"
-        disableRipple
+        to="/profiles"
         color="secondary"
-        title="Oh, this FB haha"
-        sx={{ color: 'text.primary', bgcolor: 'grey.100' }}
+        title="View Profiles"
+        sx={{
+          color: 'text.primary',
+          backgroundColor: isProfileActive ? '#e6f7ff' : 'transparent', // Giữ sáng nếu đang xem profile
+          transition: 'background-color 0.3s, transform 0.3s',
+          '&:hover': {
+            backgroundColor: '#e6f7ff',
+            transform: 'scale(1.1)',
+          },
+        }}
       >
-        <GithubOutlined />
+        <TeamOutlined />
       </IconButton>
-
-      {/* <Notification /> */}
-      {!downLG && <Profile />}
-      {/* {downLG && <MobileSection />} */}
     </>
   );
 }

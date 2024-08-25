@@ -20,6 +20,13 @@ const dashboard = {
       url: '/dashboard/default',
       icon: icons.DashboardOutlined,
       breadcrumbs: false
+    },
+    {
+      id: 'util-dashboardnew',
+      title: 'Dashboardnew',
+      type: 'item',
+      url: '/dashboardnew',
+      icon: icons.LineChartOutlined,  // Icon biểu đồ cho dashboard
     }
   ]
 };

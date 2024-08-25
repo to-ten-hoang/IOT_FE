@@ -8,6 +8,7 @@ const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
 const DashboardNew = Loadable(lazy(() => import('pages/component-overview/dashboardNew/index')));
 const DataSensors = Loadable(lazy(() => import('pages/component-overview/dataSensors/index')));
 const ActionHistory = Loadable(lazy(() => import('pages/component-overview/actionHistory/index')));
+const Profiles = Loadable(lazy(() => import('pages/component-overview/profiles/index')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -30,6 +31,10 @@ const MainRoutes = {
     {
       path: 'actionHistory',
       element: <ActionHistory />
+    },
+    {
+      path: 'profiles',
+      element: <Profiles />
     }
   ]
 };

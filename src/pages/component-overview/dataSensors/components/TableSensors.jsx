@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Table } from 'antd';
+import { Table, Input } from 'antd';
 import fakeData from './fakeData';  // Import dữ liệu giả từ file fakeData.js
+
+const { Search } = Input;
 
 const columns = [
   {
@@ -57,28 +59,6 @@ const columns = [
     title: 'Time',
     dataIndex: 'time',
     sorter: (a, b) => new Date(a.time) - new Date(b.time),
-    filters: [
-      { text: 'Hôm nay', value: 'today' },
-      { text: 'Hôm qua', value: 'yesterday' },
-      { text: 'Tuần này', value: 'this_week' },
-    ],
-    onFilter: (value, record) => {
-      const today = new Date();
-      const recordDate = new Date(record.time);
-      switch (value) {
-        case 'today':
-          return recordDate.toDateString() === today.toDateString();
-        case 'yesterday':
-          const yesterday = new Date(today);
-          yesterday.setDate(yesterday.getDate() - 1);
-          return recordDate.toDateString() === yesterday.toDateString();
-        case 'this_week':
-          const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-          return recordDate >= startOfWeek;
-        default:
-          return false;
-      }
-    },
   }
 ];
 
@@ -128,15 +108,42 @@ const TableSensors = () => {
     setData(filteredData.slice((pagination.current - 1) * pagination.pageSize, pagination.current * pagination.pageSize));
   };
 
+  const onSearch = (value) => {
+    const filteredData = fakeData.filter(item =>
+      item.time.includes(value)
+    );
+    setData(filteredData);
+    setTableParams({
+      ...tableParams,
+      pagination: {
+        ...tableParams.pagination,
+        total: filteredData.length, // Cập nhật số lượng bản ghi sau khi tìm kiếm
+      },
+    });
+  };
+
   return (
-    <Table
-      columns={columns}
-      rowKey="id"
-      dataSource={data}
-      pagination={tableParams.pagination}
-      onChange={handleTableChange}
-      scroll={{ y: 400 }}
-    />
+    <div className='dataSensors'>
+      <div className='search'>
+        <Search
+          placeholder="Tìm kiếm theo thời gian"
+          onSearch={onSearch}
+          style={{
+            width: 200,
+          }}
+        />
+      </div>
+      <div className='tableData'>
+        <Table
+          columns={columns}
+          rowKey="id"
+          dataSource={data}
+          pagination={tableParams.pagination}
+          onChange={handleTableChange}
+          scroll={{ y: 400 }}
+        />
+      </div>
+    </div>
   );
 };
 
