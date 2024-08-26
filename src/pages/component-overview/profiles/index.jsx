@@ -25,12 +25,12 @@ function Profiles() {
     },
     {
       id: 3,
-      name: "Lê Văn C",
-      className: "CNTT3-K14",
-      studentId: "B180zzzz",
-      avatarUrl: "https://example.com/avatar3.jpg",
-      coverUrl: "https://example.com/cover3.jpg",
-      githubUrl: "https://github.com/levanc",
+      name: "Nguyễn Hoàng Hải",
+      className: "D21HTTT4",
+      studentId: "B21DCCN319",
+      avatarUrl: "https://scontent.fsgn14-1.fna.fbcdn.net/v/t39.30808-6/383389461_1030759194612783_7210132979547887269_n.jpg?stp=cp6_dst-jpg_s720x720&_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeEB9cnuAMEmHfZ7bCgN87rSvndslI9rG-S-d2yUj2sb5HWdXDhmrXBumSBRTv0w1W1-udH2K8VgtrJJ8H7FzWgP&_nc_ohc=9ru2FWqPnKkQ7kNvgFxnTcB&_nc_ht=scontent.fsgn14-1.fna&oh=00_AYDPSTKZPw9zvqqEAzog4M0vh4a_WugceQwQMo2uiO9BVg&oe=66D1D1AA",
+      coverUrl: "https://gcs.tripi.vn/public-tripi/tripi-feed/img/473615Pmt/image-200-anh-hoang-hon-dep-buon-co-don-lang-man-cuc-chill-167642975045324.jpg",
+      githubUrl: "hainguyencntt1@gmail.com",
     },
   ];
 
