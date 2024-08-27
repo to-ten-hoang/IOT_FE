@@ -33,6 +33,10 @@ const MainRoutes = {
     {
       path: 'profiles',
       element: <Profiles />
+    },
+    {
+      path: 'dashboard/default',
+      element: <DashboardNew />
     }
   ]
 };
