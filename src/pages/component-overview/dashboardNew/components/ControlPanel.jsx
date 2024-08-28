@@ -32,7 +32,7 @@ const ControlPanel = ({ onChange }) => {
         <div>
           <FontAwesomeIcon 
             icon={faFan} 
-            className={`icon ${fanOn ? 'spinning fan-lit' : ''}`} 
+            className={`icon ${fanOn ? 'spinning fan-lit' : ''}`}
           /> Quạt
         </div>
         <Switch defaultChecked onChange={handleFanChange} className='switch'/>
