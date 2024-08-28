@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Table, Input } from 'antd';
+import { Table, Input, Select } from 'antd';
 import fakeData from './fakeData';  // Import dữ liệu giả từ file fakeData.js
 
 const { Search } = Input;
+const { Option } = Select;
 
 const columns = [
   {
@@ -64,6 +65,7 @@ const columns = [
 
 const TableSensors = () => {
   const [data, setData] = useState(fakeData);  // Sử dụng dữ liệu giả đã tạo
+  const [searchField, setSearchField] = useState('time');  // Trường tìm kiếm mặc định là 'time'
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
@@ -109,9 +111,18 @@ const TableSensors = () => {
   };
 
   const onSearch = (value) => {
-    const filteredData = fakeData.filter(item =>
-      item.time.includes(value)
-    );
+    const filteredData = fakeData.filter(item => {
+      if (searchField === 'time') {
+        return item.time.includes(value);
+      } else if (searchField === 'temperature') {
+        return item.temperature.toString().includes(value);
+      } else if (searchField === 'humidity') {
+        return item.humidity.toString().includes(value);
+      } else if (searchField === 'light') {
+        return item.light.toString().includes(value);
+      }
+      return false;
+    });
     setData(filteredData);
     setTableParams({
       ...tableParams,
@@ -122,11 +133,25 @@ const TableSensors = () => {
     });
   };
 
+  const handleFieldChange = (value) => {
+    setSearchField(value);
+  };
+
   return (
     <div className='dataSensors'>
       <div className='search'>
+        <Select
+          defaultValue="time"
+          style={{ width: 150, marginRight: 8 }}
+          onChange={handleFieldChange}
+        >
+          <Option value="time">Thời gian</Option>
+          <Option value="temperature">Nhiệt độ</Option>
+          <Option value="humidity">Độ ẩm</Option>
+          <Option value="light">Ánh sáng</Option>
+        </Select>
         <Search
-          placeholder="Tìm kiếm theo thời gian"
+          placeholder={`Tìm kiếm theo ${searchField}`}
           onSearch={onSearch}
           style={{
             width: 200,
