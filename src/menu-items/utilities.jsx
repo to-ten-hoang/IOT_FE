@@ -26,28 +26,28 @@ const utilities = {
   children: [
     {
       id: 'util-dashboardnew',
-      title: 'Dashboard',
+      title: 'Bảng điều khiển',
       type: 'item',
       url: '/dashboardnew',
       icon: icons.LineChartOutlined,  // Icon biểu đồ cho dashboard
     },
     {
       id: 'util-datasensors',
-      title: 'Data Sensors',
+      title: 'Dữ liệu cảm biến',
       type: 'item',
       url: '/dataSensors',
       icon: icons.SlidersOutlined,  // Icon thanh trượt cho cảm biến dữ liệu
     },
     {
       id: 'util-actionHistory',
-      title: 'Action History',
+      title: 'Lịch sử hành động',
       type: 'item',
       url: '/actionHistory',
       icon: icons.HistoryOutlined,  // Icon lịch sử cho lịch sử hành động
     },
     {
       id: 'util-profiles',
-      title: 'About',
+      title: 'Thông tin cá nhân',
       type: 'item',
       url: '/profiles',
       icon: icons.TeamOutlined,  // Thay biểu tượng bằng TeamOutlined

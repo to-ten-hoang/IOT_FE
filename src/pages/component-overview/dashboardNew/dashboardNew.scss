@@ -9,6 +9,13 @@
             justify-content: center; /* Căn giữa theo chiều ngang */
             align-items: center; /* Căn giữa theo chiều dọc */
             height: 450px;
+
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
         }
     }    
 
