@@ -9,7 +9,6 @@ const columns = [
   {
     title: 'Id',
     dataIndex: 'id',
-    // sorter: true,
   },
   {
     title: 'Nhiệt độ',
@@ -50,6 +49,7 @@ const TableSensors = () => {
   const [searchDate, setSearchDate] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [order, setOrder] = useState(null);
+  const [orderField, setOrderField] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
@@ -81,10 +81,11 @@ const TableSensors = () => {
       const params = {
         field: searchField,
         term,
+        orderField,
         order,
       };
 
-      const queryString = `field=${encodeURIComponent(params.field)}&term=${encodeURIComponent(term).replace(
+      const queryString = `field=${encodeURIComponent(orderField || params.field)}&term=${encodeURIComponent(term).replace(
         /\+/g,
         ' '
       )}${order ? `&order=${encodeURIComponent(params.order)}` : ''}`;
@@ -97,23 +98,33 @@ const TableSensors = () => {
     }
   };
 
-  // useEffect để gọi API mặc định khi không có điều kiện tìm kiếm
+  // useEffect để gọi API mặc định khi không có điều kiện tìm kiếm hoặc sắp xếp
   useEffect(() => {
-    if (!isSearching) {
+    if (!isSearching && !orderField) {
       fetchDefaultData();
       const interval = setInterval(fetchDefaultData, 2000);
       return () => clearInterval(interval);
     }
-  }, [isSearching]);
+  }, [isSearching, orderField]);
 
-  // useEffect để gọi API tìm kiếm khi có điều kiện tìm kiếm
+  // useEffect để gọi API tìm kiếm hoặc sắp xếp khi có điều kiện tìm kiếm hoặc sắp xếp
   useEffect(() => {
-    if (isSearching) {
+    if (isSearching || orderField) {
       fetchData();
       const interval = setInterval(fetchData, 2000);
       return () => clearInterval(interval);
     }
-  }, [isSearching, searchField, searchDate, searchText, order]);
+  }, [isSearching, searchField, searchDate, searchText, order, orderField]);
+
+  // useEffect để kiểm tra khi các trường tìm kiếm trống và gọi API mặc định
+  useEffect(() => {
+    if (
+      (searchField !== 'time' && !searchText.trim()) ||
+      (searchField === 'time' && !searchDate)
+    ) {
+      setIsSearching(false);
+    }
+  }, [searchField, searchText, searchDate]);
 
   const onSearch = () => {
     if (
@@ -144,8 +155,10 @@ const TableSensors = () => {
 
   const handleTableChange = (pagination, filters, sorter) => {
     if (sorter.order) {
+      setOrderField(sorter.field);
       setOrder(sorter.order === 'ascend' ? 'ASC' : 'DESC');
     } else {
+      setOrderField(null);
       setOrder(null);
     }
     setPagination(pagination);
@@ -170,12 +183,14 @@ const TableSensors = () => {
             showTime
             placeholder={`Tìm kiếm theo ${fieldLabels[searchField]}`}
             onChange={handleDateChange}
+            onPressEnter={onSearch} // Thêm onPressEnter cho DatePicker
             style={{ width: 200 }}
           />
         ) : (
           <Input
             placeholder={`Tìm kiếm theo ${fieldLabels[searchField]}`}
             onChange={handleTextChange}
+            onPressEnter={onSearch} // Thêm onPressEnter cho Input
             style={{ width: 200 }}
           />
         )}
