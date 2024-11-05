@@ -1,73 +1,129 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Input, Select, DatePicker, Button, Typography } from 'antd';
-import moment from 'moment';
-import fakeData from './fakeData';
+import axios from 'axios';
 
-const { Search } = Input;
 const { Option } = Select;
 const { Text } = Typography;
 
+const columns = [
+  {
+    title: 'Id',
+    dataIndex: 'id',
+  },
+  {
+    title: 'Tên thiết bị',
+    dataIndex: 'name',
+  },
+  {
+    title: 'Hành động',
+    dataIndex: 'action',
+    render: (action) => (action ? 'Bật' : 'Tắt'),
+  },
+  {
+    title: 'Thời gian',
+    dataIndex: 'timeConvert',
+    sorter: true,
+    render: (text) => {
+      const date = new Date(text);
+      return date.toLocaleTimeString() + ' ' + date.toLocaleDateString();
+    },
+  },
+];
+
+// Hàm để định dạng ngày và giờ theo định dạng "YYYY-MM-DD HH:mm:ss"
+const formatDate = (date) => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
 const TableAction = () => {
-  const [filteredData, setFilteredData] = useState(fakeData);
-  const [searchField, setSearchField] = useState('timeConvert');
+  const [data, setData] = useState([]);
+  const [searchField, setSearchField] = useState('time');
   const [searchDate, setSearchDate] = useState(null);
   const [searchText, setSearchText] = useState('');
+  const [order, setOrder] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      width: 100,
-    },
-    {
-      title: 'Tên thiết bị',
-      dataIndex: 'name',
-      width: 150,
-      filters: [
-        { text: 'LED', value: 'LED' },
-        { text: 'FAN', value: 'FAN' },
-        { text: 'AIR', value: 'AIR' },
-      ],
-      onFilter: (value, record) => record.name.includes(value),
-    },
-    {
-      title: 'Hành động',
-      dataIndex: 'action',
-      width: 100,
-      filters: [
-        { text: 'Bật', value: true },
-        { text: 'Tắt', value: false },
-      ],
-      onFilter: (value, record) => record.action === value,
-      render: (action) => (action ? 'Bật' : 'Tắt'),
-    },
-    {
-      title: 'Thời gian',
-      dataIndex: 'timeConvert',
-      width: 180,
-      render: (text) => moment(text).format('HH:mm:ss DD/MM/YYYY'),
-    },
-  ];
+  // Hàm gọi API mặc định
+  const fetchDefaultData = async () => {
+    try {
+      const response = await axios.get('http://26.247.153.202:8080/api/historyaction');
+      setData(response.data);
+    } catch (error) {
+      console.error('Lỗi khi gọi dữ liệu mặc định:', error);
+    }
+  };
+
+  // Hàm gọi API với điều kiện tìm kiếm
+  const fetchData = async () => {
+    try {
+      let term = '';
+      if (searchField === 'time' && searchDate) {
+        term = formatDate(searchDate.toDate());
+      } else if (searchText) {
+        term = searchText.trim();
+      }
+
+      const params = {
+        field: searchField,
+        term,
+        order,
+      };
+
+      const queryString = `field=${params.field}&term=${term}${order ? `&order=${params.order}` : ''}`;
+      const url = `http://26.247.153.202:8080/api/historyaction?${queryString}`;
+      const response = await axios.get(url);
+      setData(response.data);
+    } catch (error) {
+      console.error('Lỗi khi gọi dữ liệu:', error);
+    }
+  };
+
+  // useEffect để gọi API mặc định liên tục khi không có điều kiện tìm kiếm
+  useEffect(() => {
+    if (!isSearching) {
+      fetchDefaultData();
+      const interval = setInterval(fetchDefaultData, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [isSearching]);
+
+  // useEffect để gọi API tìm kiếm liên tục khi có điều kiện tìm kiếm
+  useEffect(() => {
+    if (isSearching) {
+      fetchData();
+      const interval = setInterval(fetchData, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [isSearching, searchField, searchDate, searchText, order]);
+
+  // useEffect để kiểm tra khi các trường tìm kiếm trống và gọi API mặc định
+  useEffect(() => {
+    if (
+      (searchField !== 'time' && !searchText.trim()) ||
+      (searchField === 'time' && !searchDate)
+    ) {
+      setIsSearching(false);
+    }
+  }, [searchField, searchText, searchDate]);
 
   const onSearch = () => {
-    let result = fakeData;
-
-    if (searchField === 'timeConvert' && searchDate) {
-      result = result.filter((item) =>
-        moment(item.timeConvert).isSame(searchDate, 'day')
-      );
-    } else if (searchField === 'action') {
-      const actionValue = searchText.toLowerCase() === 'bật' ? true : searchText.toLowerCase() === 'tắt' ? false : null;
-      if (actionValue !== null) {
-        result = result.filter((item) => item.action === actionValue);
-      }
-    } else if (searchText) {
-      result = result.filter((item) =>
-        item[searchField].toString().toLowerCase().includes(searchText.trim().toLowerCase())
-      );
+    if (
+      (searchField !== 'time' && !searchText.trim()) ||
+      (searchField === 'time' && !searchDate)
+    ) {
+      setIsSearching(false); // Quay về chế độ gọi API mặc định
+      fetchDefaultData();
+    } else {
+      setIsSearching(true); // Bắt đầu chế độ gọi API có điều kiện
+      fetchData();
     }
-
-    setFilteredData(result);
   };
 
   const handleFieldChange = (value) => {
@@ -76,51 +132,68 @@ const TableAction = () => {
     setSearchDate(null);
   };
 
+  const handleDateChange = (date) => {
+    setSearchDate(date);
+  };
+
+  const handleTextChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    if (sorter.order) {
+      setOrder(sorter.order === 'ascend' ? 'ASC' : 'DESC');
+    } else {
+      setOrder(null);
+    }
+    setPagination(pagination);
+    fetchData();
+  };
+
   return (
-    <div>
-      <div style={{ marginBottom: 16 }}>
+    <div className='dataSensors'>
+      <div className='search'>
         <Select
-          defaultValue="timeConvert"
+          defaultValue="time"
           style={{ width: 150, marginRight: 8 }}
           onChange={handleFieldChange}
         >
-          <Option value="timeConvert">Thời gian</Option>
+          <Option value="time">Thời gian</Option>
           <Option value="name">Tên thiết bị</Option>
-          <Option value="action">Hành động</Option>
         </Select>
-
-        {searchField === 'timeConvert' ? (
+        {searchField === 'time' ? (
           <DatePicker
             showTime
             placeholder="Tìm kiếm theo thời gian"
-            onChange={(date) => setSearchDate(date)}
-            style={{ width: 200, marginRight: 8 }}
+            onChange={handleDateChange}
+            style={{ width: 200 }}
           />
         ) : (
-          <Search
+          <Input
             placeholder={`Tìm kiếm theo ${searchField}`}
-            onChange={(e) => setSearchText(e.target.value)}
-            onSearch={onSearch}
-            style={{ width: 200, marginRight: 8 }}
+            onChange={handleTextChange}
+            onPressEnter={onSearch}
+            style={{ width: 200 }}
           />
         )}
-        <Button type="primary" onClick={onSearch}>Tìm kiếm</Button>
+        <Button type="primary" onClick={onSearch} style={{ marginLeft: '8px' }}>
+          Tìm kiếm
+        </Button>
       </div>
-
-      <Text style={{ marginBottom: 16 }}>Tổng số bản ghi: {filteredData.length}</Text>
-
+      <Text style={{ marginTop: 16, display: 'block' }}>
+        Tổng số bản ghi: {data.length}
+      </Text>
       <Table
         columns={columns}
-        dataSource={filteredData}
-        pagination={{
-          defaultPageSize: 10,
-          showSizeChanger: true,
-          pageSizeOptions: ['5', '10', '15', '20'],
-        }}
-        scroll={{
-          y: 500,
-        }}
         rowKey="id"
+        dataSource={data}
+        pagination={{
+          ...pagination,
+          pageSizeOptions: ['5', '10', '15', '20'],
+          showSizeChanger: true,
+        }}
+        onChange={handleTableChange}
+        scroll={{ y: 400 }}
       />
     </div>
   );

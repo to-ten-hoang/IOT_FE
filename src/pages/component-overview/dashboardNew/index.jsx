@@ -8,7 +8,6 @@ import "./dashboardNew.scss";
 
 export default function DashboardNew() {
   const [data, setData] = useState([]); // Lưu trữ dữ liệu từ API
-  const [devices, setDevices] = useState([]);
 
   // Gọi API để lấy dữ liệu thật
   useEffect(() => {
@@ -16,7 +15,11 @@ export default function DashboardNew() {
       try {
         const response = await axios.get('http://26.247.153.202:8080/api/');
         console.log(response.data);
-        setData(response.data); // Lưu dữ liệu từ API vào state
+
+        // Sắp xếp dữ liệu theo thứ tự thời gian (từ cũ đến mới)
+        const sortedData = response.data.sort((a, b) => new Date(a.timeConvert) - new Date(b.timeConvert));
+
+        setData(sortedData); // Lưu dữ liệu đã sắp xếp vào state
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -24,10 +27,10 @@ export default function DashboardNew() {
 
     fetchData(); // Gọi API ngay khi component mount
 
-    // Gọi API mỗi 5 giây để cập nhật dữ liệu
+    // Gọi API mỗi giây để cập nhật dữ liệu
     const intervalId = setInterval(() => {
       fetchData();
-    }, 500); // Gọi API mỗi 5 giây
+    }, 1000); // Gọi API mỗi 1 giây
 
     return () => clearInterval(intervalId); // Dọn dẹp interval khi component unmount
   }, []); // useEffect sẽ chỉ chạy một lần khi component mount
