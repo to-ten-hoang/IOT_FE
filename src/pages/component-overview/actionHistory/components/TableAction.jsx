@@ -48,17 +48,8 @@ const TableAction = () => {
   const [searchText, setSearchText] = useState('');
   const [order, setOrder] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [isSorted, setIsSorted] = useState(false);
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
-
-  // Hàm gọi API mặc định
-  const fetchDefaultData = async () => {
-    try {
-      const response = await axios.get('http://26.247.153.202:8080/api/historyaction');
-      setData(response.data);
-    } catch (error) {
-      console.error('Lỗi khi gọi dữ liệu mặc định:', error);
-    }
-  };
 
   // Hàm gọi API với điều kiện tìm kiếm
   const fetchData = async () => {
@@ -85,23 +76,23 @@ const TableAction = () => {
     }
   };
 
-  // useEffect để gọi API mặc định liên tục khi không có điều kiện tìm kiếm
+  // useEffect để gọi API mặc định liên tục khi không có điều kiện tìm kiếm hoặc sắp xếp
   useEffect(() => {
-    if (!isSearching) {
-      fetchDefaultData();
-      const interval = setInterval(fetchDefaultData, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [isSearching]);
-
-  // useEffect để gọi API tìm kiếm liên tục khi có điều kiện tìm kiếm
-  useEffect(() => {
-    if (isSearching) {
+    if (!isSearching && !isSorted) {
       fetchData();
       const interval = setInterval(fetchData, 2000);
       return () => clearInterval(interval);
     }
-  }, [isSearching, searchField, searchDate, searchText, order]);
+  }, [isSearching, isSorted]);
+
+  // useEffect để gọi API tìm kiếm liên tục khi có điều kiện tìm kiếm hoặc đang sắp xếp
+  useEffect(() => {
+    if (isSearching || isSorted) {
+      fetchData();
+      const interval = setInterval(fetchData, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [isSearching, searchField, searchDate, searchText, order, isSorted]);
 
   // useEffect để kiểm tra khi các trường tìm kiếm trống và gọi API mặc định
   useEffect(() => {
@@ -119,7 +110,7 @@ const TableAction = () => {
       (searchField === 'time' && !searchDate)
     ) {
       setIsSearching(false); // Quay về chế độ gọi API mặc định
-      fetchDefaultData();
+      fetchData();
     } else {
       setIsSearching(true); // Bắt đầu chế độ gọi API có điều kiện
       fetchData();
@@ -143,11 +134,13 @@ const TableAction = () => {
   const handleTableChange = (pagination, filters, sorter) => {
     if (sorter.order) {
       setOrder(sorter.order === 'ascend' ? 'ASC' : 'DESC');
+      setIsSorted(true);
     } else {
       setOrder(null);
+      setIsSorted(false);
     }
     setPagination(pagination);
-    fetchData();
+    fetchData(); // Gọi API sau khi cập nhật trạng thái sắp xếp
   };
 
   return (
