@@ -32,6 +32,13 @@ const utilities = {
       icon: icons.LineChartOutlined,  // Icon biểu đồ cho dashboard
     },
     {
+      id: 'util-dashboard2',
+      title: 'Bảng điều khiển 2',
+      type: 'item',
+      url: '/dashboard2',
+      icon: icons.DashboardOutlined,  // Icon bảng điều khiển cho dashboard 2
+    },
+    {
       id: 'util-datasensors',
       title: 'Dữ liệu cảm biến',
       type: 'item',

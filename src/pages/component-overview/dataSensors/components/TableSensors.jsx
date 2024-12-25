@@ -4,7 +4,6 @@ import axios from 'axios';
 
 const { Option } = Select;
 const { Text } = Typography;
-
 const columns = [
   {
     title: 'Id',
@@ -26,6 +25,11 @@ const columns = [
     sorter: true,
   },
   {
+    title: 'Cảm biến mới', // Thay "Cảm biến khác" thành "Cảm biến mới"
+    dataIndex: 'news', // Đảm bảo rằng dữ liệu của bạn có trường "news"
+    sorter: true,
+  },
+  {
     title: 'Thời gian',
     dataIndex: 'timeConvert',
     sorter: true,
@@ -41,6 +45,7 @@ const fieldLabels = {
   temperature: 'Nhiệt độ',
   humidity: 'Độ ẩm',
   light: 'Ánh sáng',
+  news: 'Cảm biến mới', 
 };
 
 const TableSensors = () => {
@@ -177,6 +182,7 @@ const TableSensors = () => {
           <Option value="temperature">Nhiệt độ</Option>
           <Option value="humidity">Độ ẩm</Option>
           <Option value="light">Ánh sáng</Option>
+          <Option value="news">Cảm biến mới</Option> 
         </Select>
         {searchField === 'time' ? (
           <DatePicker

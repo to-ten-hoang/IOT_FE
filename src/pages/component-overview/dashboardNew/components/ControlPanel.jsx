@@ -21,6 +21,7 @@ const ControlPanel = ({ onChange }) => {
       const response = await axios.get('http://26.247.153.202:8080/api/alldevice');
       const devices = response.data;
 
+      // Cập nhật trạng thái của các thiết bị dựa vào tên của chúng
       devices.forEach(device => {
         if (device.name === 'FAN') setFanOn(device.status);
         if (device.name === 'LED') setLightOn(device.status);
@@ -28,13 +29,14 @@ const ControlPanel = ({ onChange }) => {
       });
     } catch (error) {
       console.error('Error fetching initial status:', error);
+      message.error('Không thể lấy thông tin trạng thái. Vui lòng thử lại.');
     }
   };
 
   // Gọi hàm lấy trạng thái khi component được tải
   useEffect(() => {
     fetchInitialStatus();
-  }, []);
+  }, []); // Chỉ gọi 1 lần khi component được mount
 
   // Hàm bật/tắt Quạt
   const handleFanChange = async (checked) => {
