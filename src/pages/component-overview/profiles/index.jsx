@@ -20,7 +20,7 @@ function Profiles() {
       className: "D21CNPM1",
       studentId: "B21DCCN398",
       avatarUrl: "https://i.pinimg.com/564x/f1/43/64/f1436415a2a208043bdef80c73d66b4a.jpg",
-      coverUrl: "https://www.baokontum.com.vn/uploads/Image/2023/05/07/173837pasted%20image%200.png",
+      coverUrl: "https://img.pikbest.com/wp/202344/dramatic-sky-stunning-cinematic-sunset-a-natural-s-beautiful-and-texture-background_9903058.jpg!w700wp",
       githubUrl: "https://github.com/vuhuyhoang12abm",
     },
     {
